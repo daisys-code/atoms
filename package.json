@@ -1,0 +1,12 @@
+{
+  "name": "mimum",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "web-dev-server --open --watch"
+  },
+  "devDependencies": {
+    "@web/dev-server": "^0.4.6"
+  }
+}

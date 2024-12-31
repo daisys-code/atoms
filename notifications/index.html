@@ -1,0 +1,24 @@
+<title>notifications</title>
+<button id="permission">ask permission</button>
+<button id="trigger" disabled>trigger notification</button>
+<script>
+const permissionEl = document.querySelector('#permission')
+const triggerEl = document.querySelector('#trigger')
+const enableTrigger = enabled => enabled 
+  ? triggerEl.removeAttribute('disabled')
+  : triggerEl.setAttribute('disabled', '')
+
+navigator.permissions.query({ name: 'notifications' })
+  .then(status => {
+    enableTrigger(status.state === 'granted')
+    status.onchange = () => {
+      enableTrigger(status.state === 'granted')
+    }
+  })
+  
+permissionEl.onclick = () => Notification.requestPermission()
+triggerEl.onclick = () => {
+  const notification = new Notification('hello daisy')
+  notification.show()
+}
+</script>
