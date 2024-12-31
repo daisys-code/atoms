@@ -1,13 +1,27 @@
 <title>notifications</title>
-<button id="permission">ask permission</button>
-<button id="trigger" disabled>trigger notification</button>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<h2>Instructions</h2>
+<ol>
+  <li>Click <button id="permission">Ask Permission</button></li>
+  <li>Select "Allow" from the prompt</li>
+  <li>Click <button id="trigger" disabled>Trigger Notification</button></li>
+</ol>
+<h2>Troubleshooting</h2>
+<ul>
+  <li>
+    <a href="https://stackoverflow.com/questions/62604432/why-javascript-notification-not-showing" target="_blank" rel="noreferrer">
+      Ensure notifications are enabled for your browser.
+    </a>
+  </li>
+</ul>
 <script>
+let count = 0;
 const permissionEl = document.querySelector('#permission')
 const triggerEl = document.querySelector('#trigger')
-const enableTrigger = enabled => enabled 
+const enableTrigger = enabled => enabled
   ? triggerEl.removeAttribute('disabled')
   : triggerEl.setAttribute('disabled', '')
-
+// Monitor changes to the notifications permission
 navigator.permissions.query({ name: 'notifications' })
   .then(status => {
     enableTrigger(status.state === 'granted')
@@ -15,10 +29,10 @@ navigator.permissions.query({ name: 'notifications' })
       enableTrigger(status.state === 'granted')
     }
   })
-  
+// Attach Event listeners
 permissionEl.onclick = () => Notification.requestPermission()
 triggerEl.onclick = () => {
-  const notification = new Notification('hello daisy')
+  const notification = new Notification(`Notifications this session: ${++count}`)
   notification.show()
 }
 </script>
