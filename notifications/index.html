@@ -5,6 +5,7 @@
   <li>Click <button id="permission">Ask Permission</button></li>
   <li>Select "Allow" from the prompt</li>
   <li>Click <button id="trigger" disabled>Trigger Notification</button></li>
+  <li>Or for mobile: <button id="mobile-trigger" disabled>Trigger Notification</button></li>
 </ol>
 <h2>Troubleshooting/Caveats</h2>
 <ul>
@@ -44,5 +45,27 @@ permissionEl.onclick = () => Notification.requestPermission()
 triggerEl.onclick = () => {
   const notification = new Notification(`Notifications this session: ${++count}`)
   notification.show()
+}
+</script>
+<!-- Mobile Compatible -->
+<script>
+const mobileTriggerEl = document.querySelector('#mobile-trigger')
+const enableMobileTrigger = enabled => enabled
+  ? mobileTriggerEl.removeAttribute('disabled')
+  : mobileTriggerEl.setAttribute('disabled', '')
+navigator.serviceWorker.register('service-worker.js')
+// Monitor changes to the notifications permission
+navigator.permissions.query({ name: 'notifications' })
+  .then(status => {
+    enableMobileTrigger(status.state === 'granted')
+    status.onchange = () => {
+      enableMobileTrigger(status.state === 'granted')
+    }
+  })
+// Attach Event listeners
+mobileTriggerEl.onclick = () => {
+  navigator.serviceWorker.ready.then(registration => {
+    registration.showNotification(`Notifications this session: ${++count}`)
+  })
 }
 </script>
