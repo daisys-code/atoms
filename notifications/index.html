@@ -77,7 +77,6 @@
   window.onerror = message => {
     const body = document.querySelector('body')
     const error = document.createElement('p')
-    console.log(message)
     error.textContent = message
     body.appendChild(error)
   }

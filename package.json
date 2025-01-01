@@ -1,8 +1,7 @@
 {
   "name": "mimum",
   "version": "0.1.0",
-  "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "start": "web-dev-server --open --watch"
   },
