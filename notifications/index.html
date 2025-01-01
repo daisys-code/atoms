@@ -23,49 +23,58 @@
     <a href="https://stackoverflow.com/questions/31512504/html5-notification-not-working-in-mobile-chrome" target="_blank" rel="noreferrer">
       <code>Notification</code> constructor doesn't work on mobile chrome
     </a>
+    (<a href="https://issues.chromium.org/issues/40415865" target="_blank" rel="noreferrer">and it likely never will</a>)
   </li>
 </ul>
 <script>
-let count = 0;
-const permissionEl = document.querySelector('#permission')
-const triggerEl = document.querySelector('#trigger')
-const enableTrigger = enabled => enabled
-  ? triggerEl.removeAttribute('disabled')
-  : triggerEl.setAttribute('disabled', '')
-// Monitor changes to the notifications permission
-navigator.permissions.query({ name: 'notifications' })
-  .then(status => {
-    enableTrigger(status.state === 'granted')
-    status.onchange = () => {
+  let count = 0;
+  const permissionEl = document.querySelector('#permission')
+  const triggerEl = document.querySelector('#trigger')
+  const enableTrigger = enabled => enabled
+    ? triggerEl.removeAttribute('disabled')
+    : triggerEl.setAttribute('disabled', '')
+  // Monitor changes to the notifications permission
+  navigator.permissions.query({ name: 'notifications' })
+    .then(status => {
       enableTrigger(status.state === 'granted')
-    }
-  })
-// Attach Event listeners
-permissionEl.onclick = () => Notification.requestPermission()
-triggerEl.onclick = () => {
-  const notification = new Notification(`Notifications this session: ${++count}`)
-  notification.show()
-}
+      status.onchange = () => {
+        enableTrigger(status.state === 'granted')
+      }
+    })
+  // Attach Event listeners
+  permissionEl.onclick = () => Notification.requestPermission()
+  triggerEl.onclick = () => void new Notification(`Notifications this session: ${++count}`)
 </script>
-<!-- Mobile Compatible -->
+<!-- Mobile Compatible API -->
 <script>
-const mobileTriggerEl = document.querySelector('#mobile-trigger')
-const enableMobileTrigger = enabled => enabled
-  ? mobileTriggerEl.removeAttribute('disabled')
-  : mobileTriggerEl.setAttribute('disabled', '')
-navigator.serviceWorker.register('service-worker.js')
-// Monitor changes to the notifications permission
-navigator.permissions.query({ name: 'notifications' })
-  .then(status => {
-    enableMobileTrigger(status.state === 'granted')
-    status.onchange = () => {
+  const mobileTriggerEl = document.querySelector('#mobile-trigger')
+  const enableMobileTrigger = enabled => enabled
+    ? mobileTriggerEl.removeAttribute('disabled')
+    : mobileTriggerEl.setAttribute('disabled', '')
+  // Register the Service Worker
+  navigator.serviceWorker.register('/service-worker.js')
+  // Monitor changes to the notifications permission
+  navigator.permissions.query({ name: 'notifications' })
+    .then(status => {
       enableMobileTrigger(status.state === 'granted')
-    }
-  })
-// Attach Event listeners
-mobileTriggerEl.onclick = () => {
-  navigator.serviceWorker.ready.then(registration => {
-    registration.showNotification(`Notifications this session: ${++count}`)
-  })
-}
+      status.onchange = () => {
+        enableMobileTrigger(status.state === 'granted')
+      }
+    })
+  // Attach Event listeners
+  mobileTriggerEl.onclick = () => {
+    navigator.serviceWorker.ready.then(registration => {
+      registration.showNotification(`Notifications this session: ${++count}`)
+    })
+  }
+</script>
+<!-- error handling -->
+<script>
+  window.onerror = message => {
+    const body = document.querySelector('body')
+    const error = document.createElement('p')
+    console.log(message)
+    error.textContent = message
+    body.appendChild(error)
+  }
 </script>
